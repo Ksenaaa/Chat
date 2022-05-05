@@ -1,26 +1,55 @@
 import React from 'react';
-import logo from './logo.svg';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
+import { Navigation } from './element/Navigation';
+import { AuthContext } from './tool/Context';
+import { privateRoutes, publicRoutes, RouteNames } from './types/IRoute';
 import './App.css';
+import 'materialize-css'
+import { useAuth } from './hooks/auth.hook';
 
-function App() {
+const App = () => {
+  const {login, logout, userAuth} = useAuth()
+  
   return (
+    <AuthContext.Provider value={{login, logout, userAuth}}>
+
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Navigation />
+        {!userAuth.userId ?
+        <Routes>   
+          {publicRoutes.map(route =>
+            <Route 
+              path={route.path}
+              element={<route.element />} 
+              key={route.path}
+            />
+          )}  
+          <Route 
+            path='*'
+            element={ <Navigate to={RouteNames.LOGIN} replace/> } 
+          />
+        </Routes> 
+        :
+        <Routes>  
+          {privateRoutes.map(route =>
+            <Route 
+              path={route.path}
+              element={<route.element />} 
+              key={route.path}
+            />
+          )}  
+          <Route 
+            path='*'
+            element={ <Navigate to={RouteNames.CHAT} replace/> } 
+          />
+        </Routes>
+        }
+      </BrowserRouter>
     </div>
+    </AuthContext.Provider>
+
   );
 }
 
-export default App;
+export default App
