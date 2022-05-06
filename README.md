@@ -1,2 +1,2 @@
-Chat users with login form.
-ksenaaa.github.io/chat/
+Chat users with login form: 
+[GitHub Pages](ksenaaa.github.io/chat/)
